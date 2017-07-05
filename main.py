@@ -13,7 +13,7 @@ bot = telebot.TeleBot(config.token)
 def repeat_all_messages(message):
     buttons = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     buttons.add("Последние 10")
-    buttons.add( "ТОП10")
+    buttons.add("ТОП10")
     buttons.add("Случайный анекдот")
     bot.send_message(chat_id=message.chat.id, text="Анекдот в студию!", reply_markup=buttons)
     bot.register_next_step_handler(message, process_step)
@@ -30,9 +30,13 @@ def process_step(message):
 
 
 def get_top(chat_id):
-    posts = get_data(config.urlTop)
+    posts = get_all_posts()
     posts.sort(key=sortByLikes)
-    send_messages(posts[89:99], chat_id)
+    posts.reverse()
+    send_messages(posts[0:10], chat_id)
+
+def sortByLikes(post):
+    return post['likes']["count"]
 
 
 def get_last_10(chat_id):
@@ -41,9 +45,7 @@ def get_last_10(chat_id):
 
 
 def get_random(chat_id):
-    # id = random.randint(554000, 555000).__str__()
-    # url = config.urlRandom.format('-45491419_'.__add__(id))
-    posts = get_data(config.urlTop)[random.randint(0,99)]
+    posts = get_data(config.urlLast100)[random.randint(0, 99)]
     send_messages(posts, chat_id)
 
 
@@ -55,7 +57,7 @@ def send_messages(posts, chat_id):
             text = '\n\n------№{}---------\n'.format(i + 1).__add__(post["text"].replace("<br>", "\n")).__add__(
                 '\n\nРейтинг лайков: {}'.format(post['likes']["count"]))
             text_array.append(text)
-            if (i%3 == 0):
+            if (i % 3 == 0):
                 join = ''.join(text_array)
                 bot.send_message(chat_id, join)
                 text_array.clear()
@@ -80,9 +82,14 @@ def get_data(url):
         timeout.cancel()
 
 
+def get_all_posts():
+    offset = 0
+    posts = []
+    while offset < 1000:
+        posts.extend(get_data(config.urlTop.format(offset)))
+        offset += 100
+    return posts
+
+
 if __name__ == '__main__':
     bot.polling(none_stop=True)
-
-
-def sortByLikes(post):
-    return post['likes']["count"]
