@@ -32,7 +32,7 @@ def process_step(message):
 
 
 def get_top(chat_id):
-    posts = get_top_posts()
+    posts = get_top_posts()[0:10]
     send_messages(posts, chat_id)
 
 
@@ -44,7 +44,7 @@ def get_last_10(chat_id):
 def get_random(chat_id):
     dao = DataBaseDao()
     post = dao.select_random_single()
-    if (len(post)==0):
+    if (len(post) == 0):
         post = get_data(config.urlLast100)[random.randint(0, 99)]
     send_messages(post, chat_id)
     dao.close()
@@ -94,6 +94,7 @@ def get_top_posts():
             posts.extend(data)
             offset += 100
         posts.sort(key=sortByLikes)
+        posts.reverse()
         top100 = posts[0:100]
         dao.create_few(top100)
         dao.close()
@@ -104,7 +105,7 @@ def get_top_posts():
         return top100
 
 
-def sortByLikes(post:Post):
+def sortByLikes(post: Post):
     return post.likes
 
 

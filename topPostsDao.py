@@ -1,4 +1,5 @@
 import sqlite3
+from post import Post
 
 
 class DataBaseDao:
@@ -8,21 +9,22 @@ class DataBaseDao:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS post (id INT PRIMARY KEY, text TEXT, likes INT)")
 
     def create_single(self, post):
-        values__format = 'INSERT INTO post VALUES ({0},\'{1}\',{2})'.format(post.id, post.text, post.likes)
-        return self.cursor.execute(
-            values__format).fetchall()
+        query = f"INSERT INTO post(id,text,likes) VALUES ({post.id},'{post.text}',{post.likes})"
+        executed = self.cursor.execute(query)
+        self.con.commit()
+        return executed.fetchall()
 
     def select_single(self, id):
-        return self.cursor.execute('SELECT * FROM post where id = {}'.format(id)).fetchall()
+        return convertToPostArray(self.cursor.execute(f'SELECT * FROM post where id = {id}').fetchall())
 
     def select_random_single(self):
-        return self.cursor.execute('SELECT * FROM post ORDER BY RANDOM() LIMIT 1').fetchall()
+        return convertToPostArray(self.cursor.execute('SELECT * FROM post ORDER BY RANDOM() LIMIT 1').fetchall())
 
     def select_all(self):
-        return self.cursor.execute('SELECT * FROM post').fetchall()
+        return convertToPostArray(self.cursor.execute('SELECT * FROM post').fetchall())
 
     def selectId_all(self):
-        return self.cursor.execute('SELECT id FROM post').fetchall()
+        return convertToPostArray(self.cursor.execute('SELECT id FROM post').fetchall())
 
     def select_few(self, ids):
         results = []
@@ -45,3 +47,10 @@ class DataBaseDao:
 
     def close(self):
         self.con.close()
+
+
+def convertToPostArray(resultArray):
+    listPosts = []
+    for result in resultArray:
+        listPosts.append(Post(result[0], result[1], result[2]))
+    return listPosts
