@@ -4,6 +4,8 @@ import eventlet
 import requests
 import logging
 import random
+import time
+from telebot.util import async
 from telebot import types
 from post import Post
 from topPostsDao import DataBaseDao
@@ -55,16 +57,19 @@ def send_messages(posts, chat_id):
     if (isinstance(posts, list)):
         text_array = []
         for i, post in enumerate(posts):
-            text = '\n\n------№{}---------\n'.format(i + 1).__add__(post.text.replace("<br>", "\n")).__add__(
-                '\n\nРейтинг лайков: {}'.format(post.likes))
-            text_array.append(text)
+            text = ''
+            if (len(posts) != 1):
+                text = f'\n\n------№{i + 1}---------\n'
+            full_text = text.__add__(post.text.replace("<br>", "\n")) \
+                .__add__(f'\n\nРейтинг лайков: {post.likes}')
+            text_array.append(full_text)
             if (i % 3 == 0):
                 join = ''.join(text_array)
                 bot.send_message(chat_id, join)
                 text_array.clear()
     else:
         text = posts.text.replace("<br>", "\n").__add__(
-            '\n\nРейтинг лайков: {}'.format(posts.likes))
+            f'\n\nРейтинг лайков: {posts.likes}')
         bot.send_message(chat_id, text)
 
 
@@ -109,5 +114,44 @@ def sortByLikes(post: Post):
     return post.likes
 
 
+def check_new_posts_vk():
+    try:
+        file = open(config.FILENAME_LASTID, 'r')
+    except FileNotFoundError:
+        file = open(config.FILENAME_LASTID, 'w')
+    last_id = file.read()
+    if last_id is None or last_id == "":
+        logging.error('Empty file with last id. Last id = 0.')
+        last_id = 0
+    logging.info(f'Last ID from file = {last_id}')
+
+    lastPosts = get_data(config.url)
+    if lastPosts is not None:
+        maxId = last_id
+        for post in lastPosts:
+            if (post.id > int(last_id)):
+                send_messages(post, config.CHAT_ID)
+                if (post.id > int(maxId)):
+                    maxId = post.id
+        if (maxId != last_id):
+            with open(config.FILENAME_LASTID, 'w') as file:
+                file.write(str(maxId))
+                logging.info(f'New last id wrote in file: {maxId}')
+        else:
+            logging.info('No new posts')
+    logging.info('Finished scan new post')
+
+
+@async()
+def ping_vk():
+    while True:
+        check_new_posts_vk()
+        time.sleep(60 * 10)
+
+
 if __name__ == '__main__':
+    logging.getLogger('requests').setLevel(logging.CRITICAL)
+    logging.basicConfig(format='[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s', level=logging.INFO,
+                        filename='bot_log.log', datefmt='%d.%m.%Y %H:%M:%S')
+    ping_vk()
     bot.polling(none_stop=True)
