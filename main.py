@@ -81,6 +81,7 @@ def get_data(url):
         for i, post in enumerate(feed.json()['response']):
             if (i >= 1 and len(post["text"]) > 50):
                 list.append(Post(post["id"], post["text"], post["likes"]["count"]))
+        logging.info(f'Got data from VK by URL: {url}')
         return list
     except eventlet.timeout.Timeout:
         logging.warning('Got Timeout while retrieving VK JSON data. Cancelling...')
@@ -116,9 +117,10 @@ def sortByLikes(post: Post):
 
 def check_new_posts_vk():
     try:
-        file = open(config.FILENAME_LASTID, 'r')
+        file = open(config.FILENAME_LASTID, 'rt')
     except FileNotFoundError:
-        file = open(config.FILENAME_LASTID, 'w')
+        open(config.FILENAME_LASTID, 'wt')
+        file = open(config.FILENAME_LASTID, 'rt')
     last_id = file.read()
     if last_id is None or last_id == "":
         logging.error('Empty file with last id. Last id = 0.')
@@ -134,7 +136,7 @@ def check_new_posts_vk():
                 if (post.id > int(maxId)):
                     maxId = post.id
         if (maxId != last_id):
-            with open(config.FILENAME_LASTID, 'w') as file:
+            with open(config.FILENAME_LASTID, 'wt') as file:
                 file.write(str(maxId))
                 logging.info(f'New last id wrote in file: {maxId}')
         else:

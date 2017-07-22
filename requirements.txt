@@ -1,0 +1,11 @@
+certifi==2017.4.17
+chardet==3.0.4
+enum-compat==0.0.2
+eventlet==0.21.0
+greenlet==0.4.12
+idna==2.5
+pyTelegramBotAPI==3.1.0
+requests==2.18.1
+six==1.10.0
+telegram==0.0.1
+urllib3==1.21.1
