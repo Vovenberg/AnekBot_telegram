@@ -19,7 +19,6 @@ def repeat_all_messages(message):
     buttons.add("Последние 10")
     buttons.add("ТОП10")
     buttons.add("Случайный анекдот")
-    bot.send_message(chat_id=message.chat.id, text="Анекдот в студию!", reply_markup=buttons)
     bot.register_next_step_handler(message, process_step)
 
 
