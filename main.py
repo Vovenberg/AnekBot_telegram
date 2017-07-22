@@ -33,7 +33,7 @@ def process_step(message):
 
 
 def get_top(chat_id):
-    posts = get_top_posts()[0:10]
+    posts = get_top_posts()
     send_messages(posts, chat_id)
 
 
@@ -96,22 +96,16 @@ def get_data(count = 10, offset = 0):
 def get_top_posts():
     dao = DataBaseDao()
     if (dao.count_posts() == 0):
-        offset = 0
-        posts = []
-        while offset < 1000:
-            data = get_data(100, offset)
-            posts.extend(data)
-            offset += 100
+        posts = get_data(1000)
         posts.sort(key=sortByLikes)
         posts.reverse()
-        top100 = posts[0:100]
-        dao.create_few(top100)
+        dao.create_few(posts)
         dao.close()
-        return top100
+        return posts[0 : 10]
     else:
-        top100 = dao.select_all()
+        top1000 = dao.select_all()
         dao.close()
-        return top100
+        return top1000[0 : 10]
 
 
 def sortByLikes(post: Post):

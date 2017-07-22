@@ -9,10 +9,13 @@ class DataBaseDao:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS post (id INT PRIMARY KEY, text TEXT, likes INT)")
 
     def create_single(self, post):
-        query = f"INSERT INTO post(id,text,likes) VALUES ({post.id},'{post.text}',{post.likes})"
-        executed = self.cursor.execute(query)
-        self.con.commit()
-        return executed.fetchall()
+        try:
+            query = f"INSERT INTO post(id,text,likes) VALUES ({post.id},'{post.text}',{post.likes})"
+            executed = self.cursor.execute(query)
+            self.con.commit()
+            return executed.fetchall()
+        except sqlite3.OperationalError as e:
+            pass
 
     def select_single(self, id):
         return convertToPostArray(self.cursor.execute(f'SELECT * FROM post where id = {id}').fetchall())
