@@ -47,7 +47,8 @@ def get_random(chat_id):
     dao = DataBaseDao()
     post = dao.select_random_single()
     if (len(post) == 0):
-        post = get_data(config.urlLast100)[random.randint(0, 99)]
+        posts = get_data(config.urlLast100)
+        post = posts[random.randint(0,len(posts))]
     send_messages(post, chat_id)
     dao.close()
 
