@@ -33,7 +33,7 @@ def process_step(message):
 
 def get_top(chat_id):
     dao = DataBaseDao()
-    top10 = dao.select_all()[0 : 10]
+    top10 = dao.select_all()[0: 10]
     dao.close()
     send_messages(top10, chat_id)
 
@@ -43,6 +43,7 @@ def get_last_posts(chat_id, count):
     posts.sort(key=sortByLikes)
     send_messages(posts, chat_id)
 
+
 def get_random(chat_id):
     dao = DataBaseDao()
     post = dao.select_random_single()
@@ -51,6 +52,7 @@ def get_random(chat_id):
 
 
 #########################################
+
 def send_messages(posts, chat_id):
     if (isinstance(posts, list)):
         text_array = []
@@ -71,7 +73,7 @@ def send_messages(posts, chat_id):
         bot.send_message(chat_id, text)
 
 
-def get_data(count = 10, offset = 0):
+def get_data(count=10, offset=0):
     timeout = eventlet.Timeout(10)
     try:
         feed = requests.get(config.url.format(count, offset))
@@ -81,7 +83,7 @@ def get_data(count = 10, offset = 0):
                 list.append(Post(post["id"], post["text"], post["likes"]["count"]))
         len1 = len(list)
         if (len1 < count):
-            list.extend(get_data(count-len1, offset + count))
+            list.extend(get_data(count - len1, offset + count))
         logging.info(f'Got data from VK. count={count},offset={offset}')
         return list
     except eventlet.timeout.Timeout:
@@ -89,6 +91,7 @@ def get_data(count = 10, offset = 0):
         return None
     finally:
         timeout.cancel()
+
 
 def sortByLikes(post: Post):
     return post.likes
@@ -129,11 +132,20 @@ def check_new_posts_vk():
     logging.info('Finished scan new post')
 
 
+#####################################################################
+
 @async()
 def ping_vk():
     while True:
         check_new_posts_vk()
         time.sleep(60 * 10)
+
+
+@async()
+def ping_heroku():
+    while True:
+        requests.get(config.urlApp)
+        time.sleep(60 * 5)
 
 
 def initDB():
@@ -145,10 +157,12 @@ def initDB():
         dao.create_few(posts[0:500])
         dao.close()
 
+
 if __name__ == '__main__':
     logging.getLogger('requests').setLevel(logging.CRITICAL)
     logging.basicConfig(format='[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s', level=logging.INFO,
                         filename='bot_log.log', datefmt='%d.%m.%Y %H:%M:%S')
     initDB()
     ping_vk()
+    ping_heroku()
     bot.polling(none_stop=True)
