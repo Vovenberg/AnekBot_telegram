@@ -1,0 +1,88 @@
+[23.07.2017 22:23:24] main.py:87 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:23:24] main.py:87 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=1,offset=6823
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=9,offset=6814
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=37,offset=6777
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=118,offset=6659
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=206,offset=6453
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=283,offset=6170
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=367,offset=5803
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=451,offset=5352
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=530,offset=4822
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=602,offset=4220
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=684,offset=3536
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=769,offset=2767
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=845,offset=1922
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=922,offset=1000
+[23.07.2017 22:31:29] main.py:85 INFO - Got data from VK. count=1000,offset=0
+[23.07.2017 22:31:30] main.py:107 ERROR - Empty file with last id. Last id = 0.
+[23.07.2017 22:31:30] main.py:109 INFO - Last ID from file = 0
+[23.07.2017 22:31:31] main.py:85 INFO - Got data from VK. count=1,offset=13
+[23.07.2017 22:31:31] main.py:85 INFO - Got data from VK. count=3,offset=10
+[23.07.2017 22:31:31] main.py:85 INFO - Got data from VK. count=10,offset=0
+[23.07.2017 22:31:32] main.py:124 INFO - New last id wrote in file: 563696
+[23.07.2017 22:31:32] main.py:127 INFO - Finished scan new post
+[23.07.2017 22:32:29] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:32:29] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:39:06] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:39:19] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:40:27] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:40:27] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:41:44] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:41:44] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:42:27] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:42:27] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:43:41] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:43:41] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:46:29] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:46:29] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:47:16] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:47:16] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:49:18] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:49:18] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:49:33] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:49:33] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:54:05] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:54:05] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 22:54:45] main.py:110 INFO - Last ID from file = 563696
+[23.07.2017 22:54:49] main.py:85 INFO - Got data from VK. count=1,offset=13
+[23.07.2017 22:54:49] main.py:85 INFO - Got data from VK. count=3,offset=10
+[23.07.2017 22:54:49] main.py:85 INFO - Got data from VK. count=10,offset=0
+[23.07.2017 22:55:30] main.py:85 INFO - Got data from VK. count=1,offset=1
+[23.07.2017 22:55:30] main.py:85 INFO - Got data from VK. count=1,offset=0
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=1,offset=6823
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=9,offset=6814
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=37,offset=6777
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=118,offset=6659
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=206,offset=6453
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=283,offset=6170
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=367,offset=5803
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=451,offset=5352
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=530,offset=4822
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=602,offset=4220
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=684,offset=3536
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=769,offset=2767
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=845,offset=1922
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=922,offset=1000
+[23.07.2017 23:00:36] main.py:85 INFO - Got data from VK. count=1000,offset=0
+[23.07.2017 23:01:00] main.py:110 INFO - Last ID from file = 563696
+[23.07.2017 23:01:01] main.py:85 INFO - Got data from VK. count=1,offset=13
+[23.07.2017 23:01:01] main.py:85 INFO - Got data from VK. count=3,offset=10
+[23.07.2017 23:01:01] main.py:85 INFO - Got data from VK. count=10,offset=0
+[23.07.2017 23:01:01] main.py:128 INFO - No new posts
+[23.07.2017 23:01:01] main.py:129 INFO - Finished scan new post
+[23.07.2017 23:01:23] main.py:110 INFO - Last ID from file = 563696
+[23.07.2017 23:01:24] main.py:85 INFO - Got data from VK. count=1,offset=13
+[23.07.2017 23:01:24] main.py:85 INFO - Got data from VK. count=3,offset=10
+[23.07.2017 23:01:24] main.py:85 INFO - Got data from VK. count=10,offset=0
+[23.07.2017 23:01:24] main.py:128 INFO - No new posts
+[23.07.2017 23:01:24] main.py:129 INFO - Finished scan new post
+[23.07.2017 23:02:25] main.py:110 INFO - Last ID from file = 563696
+[23.07.2017 23:02:26] main.py:85 INFO - Got data from VK. count=1,offset=13
+[23.07.2017 23:02:26] main.py:85 INFO - Got data from VK. count=3,offset=10
+[23.07.2017 23:02:26] main.py:85 INFO - Got data from VK. count=10,offset=0
+[23.07.2017 23:02:26] main.py:128 INFO - No new posts
+[23.07.2017 23:02:26] main.py:129 INFO - Finished scan new post
+[23.07.2017 23:02:44] main.py:85 INFO - Got data from VK. count=1,offset=13
+[23.07.2017 23:02:44] main.py:85 INFO - Got data from VK. count=3,offset=10
+[23.07.2017 23:02:44] main.py:85 INFO - Got data from VK. count=10,offset=0

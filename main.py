@@ -3,7 +3,6 @@ import config
 import eventlet
 import requests
 import logging
-import random
 import time
 from telebot.util import async
 from telebot import types
@@ -33,8 +32,10 @@ def process_step(message):
 
 
 def get_top(chat_id):
-    posts = get_top_posts()
-    send_messages(posts, chat_id)
+    dao = DataBaseDao()
+    top10 = dao.select_all()[0 : 10]
+    dao.close()
+    send_messages(top10, chat_id)
 
 
 def get_last_posts(chat_id, count):
@@ -45,11 +46,8 @@ def get_last_posts(chat_id, count):
 def get_random(chat_id):
     dao = DataBaseDao()
     post = dao.select_random_single()
-    if (len(post) == 0):
-        posts = get_data(100)
-        post = posts[random.randint(0,len(posts))]
-    send_messages(post, chat_id)
     dao.close()
+    send_messages(post, chat_id)
 
 
 #########################################
@@ -92,22 +90,6 @@ def get_data(count = 10, offset = 0):
     finally:
         timeout.cancel()
 
-
-def get_top_posts():
-    dao = DataBaseDao()
-    if (dao.count_posts() == 0):
-        posts = get_data(1000)
-        posts.sort(key=sortByLikes)
-        posts.reverse()
-        dao.create_few(posts)
-        dao.close()
-        return posts[0 : 10]
-    else:
-        top1000 = dao.select_all()
-        dao.close()
-        return top1000[0 : 10]
-
-
 def sortByLikes(post: Post):
     return post.likes
 
@@ -116,8 +98,11 @@ def check_new_posts_vk():
     try:
         file = open(config.FILENAME_LASTID, 'rt')
     except FileNotFoundError:
-        open(config.FILENAME_LASTID, 'wt')
-        file = open(config.FILENAME_LASTID, 'rt')
+        file = open(config.FILENAME_LASTID, 'wt')
+        s = str(get_data(1)[0].id)
+        file.write(s)
+        file.close()
+        return
     last_id = file.read()
     if last_id is None or last_id == "":
         logging.error('Empty file with last id. Last id = 0.')
@@ -137,6 +122,7 @@ def check_new_posts_vk():
             send_messages(new_posts, config.CHAT_ID)
             with open(config.FILENAME_LASTID, 'wt') as file:
                 file.write(str(maxId))
+                file.close()
                 logging.info(f'New last id wrote in file: {maxId}')
         else:
             logging.info('No new posts')
@@ -150,9 +136,19 @@ def ping_vk():
         time.sleep(60 * 10)
 
 
+def initDB():
+    dao = DataBaseDao()
+    if (dao.count_posts() == 0):
+        posts = get_data(1000)
+        posts.sort(key=sortByLikes)
+        posts.reverse()
+        dao.create_few(posts[0:500])
+        dao.close()
+
 if __name__ == '__main__':
     logging.getLogger('requests').setLevel(logging.CRITICAL)
     logging.basicConfig(format='[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s', level=logging.INFO,
                         filename='bot_log.log', datefmt='%d.%m.%Y %H:%M:%S')
+    initDB()
     ping_vk()
     bot.polling(none_stop=True)
