@@ -4,6 +4,7 @@ import eventlet
 import requests
 import logging
 import time
+import random
 from telebot.util import async
 from telebot import types
 from post import Post
@@ -11,25 +12,27 @@ from topPostsDao import DataBaseDao
 
 bot = telebot.TeleBot(config.token)
 
+
 @bot.message_handler(commands=["start"])
 def start(message):
-    keyboard = types.ReplyKeyboardMarkup()
-    button_random = types.KeyboardButton(text="Случайный анекдот")
-    button_top10 = types.KeyboardButton(text="ТОП10")
-    button_last10 = types.KeyboardButton(text="Последние 10")
+    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+    button_random = types.KeyboardButton(text="🤣Случайный анекдот")
+    button_top10 = types.KeyboardButton(text="🏆ТОП10")
+    button_last10 = types.KeyboardButton(text="☝️Последнее лучшее")
     keyboard.add(button_last10, button_top10)
     keyboard.add(button_random)
     bot.send_message(message.chat.id, 'Добро пожаловать, любитель хорошего юмора. Присаживайся поудобнее, начинаем...',
                      reply_markup=keyboard)
 
+
 @bot.message_handler(content_types=["text"])
 def income_messages(message):
     chat_id = message.chat.id
-    if message.text == 'Последние 10':
-        get_last_posts(chat_id, 10)
-    if message.text == 'ТОП10':
+    if message.text == '☝️Последнее лучшее':
+        get_last_posts(chat_id, 5)
+    if message.text == '🏆ТОП10':
         get_top(chat_id)
-    if message.text == 'Случайный анекдот':
+    if message.text == '🤣Случайный анекдот':
         get_random(chat_id)
 
 
@@ -41,9 +44,19 @@ def get_top(chat_id):
 
 
 def get_last_posts(chat_id, count):
-    posts = get_data(count)
+    umoreski = get_data_from_umoreski(30)
+    posts = get_data(30)
+    posts.extend(umoreski)
     posts.sort(key=sortByLikes)
-    send_messages(posts, chat_id)
+    posts.reverse()
+    top: list = posts[0:20]
+    results = []
+    while count > 0:
+        rand = random.randint(0, len(top) - 1)
+        results.append(top[rand])
+        top.remove(top[rand])
+        count -= 1
+    send_messages(results, chat_id)
 
 
 def get_random(chat_id):
@@ -75,10 +88,14 @@ def send_messages(posts, chat_id):
         bot.send_message(chat_id, text)
 
 
-def get_data(count=10, offset=0):
+def get_data_from_umoreski(count=10, offset=0):
+    return get_data(count, offset, config.urlUmoreski)
+
+
+def get_data(count=10, offset=0, url=config.urlCategoryB):
     timeout = eventlet.Timeout(10)
     try:
-        feed = requests.get(config.url.format(count, offset))
+        feed = requests.get(url.format(count, offset))
         list = []
         for i, post in enumerate(feed.json()['response']):
             if (i >= 1 and len(post["text"]) > 50):
