@@ -11,17 +11,19 @@ from topPostsDao import DataBaseDao
 
 bot = telebot.TeleBot(config.token)
 
+@bot.message_handler(commands=["start"])
+def start(message):
+    keyboard = types.ReplyKeyboardMarkup()
+    button_random = types.KeyboardButton(text="Случайный анекдот")
+    button_top10 = types.KeyboardButton(text="ТОП10")
+    button_last10 = types.KeyboardButton(text="Последние 10")
+    keyboard.add(button_last10, button_top10)
+    keyboard.add(button_random)
+    bot.send_message(message.chat.id, 'Добро пожаловать, любитель хорошего юмора. Присаживайся поудобнее, начинаем...',
+                     reply_markup=keyboard)
 
 @bot.message_handler(content_types=["text"])
-def repeat_all_messages(message):
-    buttons = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    buttons.add("Последние 10")
-    buttons.add("ТОП10")
-    buttons.add("Случайный анекдот")
-    bot.register_next_step_handler(message, process_step)
-
-
-def process_step(message):
+def income_messages(message):
     chat_id = message.chat.id
     if message.text == 'Последние 10':
         get_last_posts(chat_id, 10)
@@ -112,12 +114,12 @@ def check_new_posts_vk():
         last_id = 0
     logging.info(f'Last ID from file = {last_id}')
 
-    lastPosts = get_data(10)
+    lastPosts = get_data(20)
     if lastPosts is not None:
         maxId = last_id
         new_posts = []
         for post in lastPosts:
-            if (post.id > int(last_id)):
+            if (post.id > int(last_id) and post.likes > 400):
                 new_posts.append(post)
                 if (post.id > int(maxId)):
                     maxId = post.id
