@@ -69,8 +69,9 @@ def get_random(chat_id):
 #########################################
 
 def send_messages(posts, chat_id):
-    if (isinstance(posts, list)):
+    if (isinstance(posts, list) and len(posts) > 1):
         text_array = []
+        m = 3 if (len(posts) % 2 == 0) else 2
         for i, post in enumerate(posts):
             text = ''
             if (len(posts) > 1):
@@ -78,11 +79,13 @@ def send_messages(posts, chat_id):
             full_text = text.__add__(post.text.replace("<br>", "\n")) \
                 .__add__(f'\n\nРейтинг лайков: {post.likes}')
             text_array.append(full_text)
-            if (i % 3 == 0):
+            if (i % m == 0):
                 join = ''.join(text_array)
                 bot.send_message(chat_id, join)
                 text_array.clear()
     else:
+        if (isinstance(posts, list)):
+            posts = posts[0]
         text = posts.text.replace("<br>", "\n").__add__(
             f'\n\nРейтинг лайков: {posts.likes}')
         bot.send_message(chat_id, text)
@@ -136,7 +139,7 @@ def check_new_posts_vk():
         maxId = last_id
         new_posts = []
         for post in lastPosts:
-            if (post.id > int(last_id) and post.likes > 400):
+            if (post.id > int(last_id) and post.likes > 300):
                 new_posts.append(post)
                 if (post.id > int(maxId)):
                     maxId = post.id
