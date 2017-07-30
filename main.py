@@ -71,7 +71,7 @@ def get_random(chat_id):
 def send_messages(posts, chat_id):
     if (isinstance(posts, list) and len(posts) > 1):
         text_array = []
-        m = 3 if (len(posts) % 2 == 0) else 2
+        m = 2 if (len(posts) % 2 != 0) else 1 if (len(posts) == 2) else 3
         for i, post in enumerate(posts):
             text = ''
             if (len(posts) > 1):
