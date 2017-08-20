@@ -25,17 +25,20 @@ class UserDao:
 
     def enable_notifications(self, username):
         self.cursor.execute(f"UPDATE user SET notifications = 1 where username = '{username}'").fetchall()
+        self.con.commit()
         self.con.close()
 
     def disable_notifications(self, username):
         self.cursor.execute(f"UPDATE user SET notifications = 0 where username = '{username}'").fetchall()
+        self.con.commit()
         self.con.close()
 
-    def get_all_user_with_enabled_notifications(self):
+    def get_all_chatId_with_enabled_notifications(self):
         return self.cursor.execute(f'SELECT chat_id FROM user WHERE notifications = 1 ').fetchall()
 
     def increment_clicks(self, username):
         self.cursor.execute(f"UPDATE user SET count_clicks = count_clicks + 1 where username = '{username}'").fetchall()
+        self.con.commit()
         self.con.close()
 
     def close(self):

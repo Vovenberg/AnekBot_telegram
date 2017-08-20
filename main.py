@@ -31,10 +31,7 @@ def start(message):
 @bot.message_handler(commands=["info"])
 def info(message):
     bot.send_message(message.chat.id,
-                     '''Доступные команды: 
-                     \disable - отключение уведомлений о новых анекдотов
-                     \enable - включение уведомлений о новых анекдотов
-
+                     '''Агрегатор анекдотов с группы ВК: https://vk.com/baneks
                      С вопросами и предложениями писать на email: v.kildushev@yandex.ru''')
 
 
@@ -42,14 +39,14 @@ def info(message):
 def disableNotifications(message):
     UserDao().disable_notifications(message.from_user.username)
     logging.info(f'Notifications from user: {message.from_user} disabled')
-    bot.send_message(message.chat.id, 'Уведомления о новых анекдотов отключены.')
+    bot.send_message(message.chat.id, 'Уведомления отключены.')
 
 
 @bot.message_handler(commands=["enable"])
 def enableNotifications(message):
     UserDao().enable_notifications(message.from_user.username)
     logging.info(f'Notifications from user: {message.from_user} enabled')
-    bot.send_message(message.chat.id, 'Уведомления о новых анекдотов включены.')
+    bot.send_message(message.chat.id, 'Уведомления включены.')
 
 
 @bot.message_handler(commands=["stats"])
@@ -63,6 +60,7 @@ def enableNotifications(message):
 
 @bot.message_handler(content_types=["text"])
 def income_messages(message):
+    UserDao().increment_clicks(message.from_user.username)
     chat_id = message.chat.id
     if message.text == '☝️Последнее лучшее':
         get_last_posts(chat_id, 5)
@@ -180,8 +178,9 @@ def check_new_posts_vk():
                 if (post.id > int(maxId)):
                     maxId = post.id
         if (maxId != last_id):
-            #TODO отправка всем пользователям
-            send_messages(new_posts, constants.CHAT_ID)
+            ids = UserDao().get_all_chatId_with_enabled_notifications()
+            for id in ids:
+                send_messages(new_posts, id[0])
             with open(constants.FILENAME_LASTID, 'wt') as file:
                 file.write(str(maxId))
                 file.close()
