@@ -1,16 +1,18 @@
-import telebot
-import config
+import logging
+import random
+import time
 import eventlet
 import requests
-import logging
-import time
-import random
-from telebot.util import async
+import telebot
+import constants
 from telebot import types
-from post import Post
-from topPostsDao import DataBaseDao
+from telebot.util import async
+from dao.topPostsDao import TopPostsDao
+from dao.usersDao import UserDao
+from dto.post import Post
+from dto.user import User
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot(constants.token)
 
 
 @bot.message_handler(commands=["start"])
@@ -21,8 +23,42 @@ def start(message):
     button_last10 = types.KeyboardButton(text="☝️Последнее лучшее")
     keyboard.add(button_last10, button_top10)
     keyboard.add(button_random)
+    UserDao().save_user(User(message.from_user, message.chat.id)).close()
     bot.send_message(message.chat.id, 'Добро пожаловать, любитель хорошего юмора. Присаживайся поудобнее, начинаем...',
                      reply_markup=keyboard)
+
+
+@bot.message_handler(commands=["info"])
+def info(message):
+    bot.send_message(message.chat.id,
+                     '''Доступные команды: 
+                     \disable - отключение уведомлений о новых анекдотов
+                     \enable - включение уведомлений о новых анекдотов
+
+                     С вопросами и предложениями писать на email: v.kildushev@yandex.ru''')
+
+
+@bot.message_handler(commands=["disable"])
+def disableNotifications(message):
+    UserDao().disable_notifications(message.from_user.username)
+    logging.info(f'Notifications from user: {message.from_user} disabled')
+    bot.send_message(message.chat.id, 'Уведомления о новых анекдотов отключены.')
+
+
+@bot.message_handler(commands=["enable"])
+def enableNotifications(message):
+    UserDao().enable_notifications(message.from_user.username)
+    logging.info(f'Notifications from user: {message.from_user} enabled')
+    bot.send_message(message.chat.id, 'Уведомления о новых анекдотов включены.')
+
+
+@bot.message_handler(commands=["stats"])
+def enableNotifications(message):
+    if (message.from_user.username == 'v_kildyushev'):
+        users = UserDao().get_all()
+        for user in users:
+            bot.send_message(message.chat.id, f'Username: {user[1]}\n Chat_id: {user[2]} \n '
+                                              f'Notifications: {user[5]}\n Clicks: {user[6]}')
 
 
 @bot.message_handler(content_types=["text"])
@@ -37,7 +73,7 @@ def income_messages(message):
 
 
 def get_top(chat_id):
-    dao = DataBaseDao()
+    dao = TopPostsDao()
     top10 = dao.select_all()[0: 10]
     dao.close()
     send_messages(top10, chat_id)
@@ -60,7 +96,7 @@ def get_last_posts(chat_id, count):
 
 
 def get_random(chat_id):
-    dao = DataBaseDao()
+    dao = TopPostsDao()
     post = dao.select_random_single()
     dao.close()
     send_messages(post, chat_id)
@@ -92,10 +128,10 @@ def send_messages(posts, chat_id):
 
 
 def get_data_from_umoreski(count=10, offset=0):
-    return get_data(count, offset, config.urlUmoreski)
+    return get_data(count, offset, constants.urlUmoreski)
 
 
-def get_data(count=10, offset=0, url=config.urlCategoryB):
+def get_data(count=10, offset=0, url=constants.urlCategoryB):
     timeout = eventlet.Timeout(10)
     try:
         feed = requests.get(url.format(count, offset))
@@ -121,9 +157,9 @@ def sortByLikes(post: Post):
 
 def check_new_posts_vk():
     try:
-        file = open(config.FILENAME_LASTID, 'rt')
+        file = open(constants.FILENAME_LASTID, 'rt')
     except FileNotFoundError:
-        file = open(config.FILENAME_LASTID, 'wt')
+        file = open(constants.FILENAME_LASTID, 'wt')
         s = str(get_data(1)[0].id)
         file.write(s)
         file.close()
@@ -144,8 +180,9 @@ def check_new_posts_vk():
                 if (post.id > int(maxId)):
                     maxId = post.id
         if (maxId != last_id):
-            send_messages(new_posts, config.CHAT_ID)
-            with open(config.FILENAME_LASTID, 'wt') as file:
+            #TODO отправка всем пользователям
+            send_messages(new_posts, constants.CHAT_ID)
+            with open(constants.FILENAME_LASTID, 'wt') as file:
                 file.write(str(maxId))
                 file.close()
                 logging.info(f'New last id wrote in file: {maxId}')
@@ -166,18 +203,19 @@ def ping_vk():
 @async()
 def ping_heroku():
     while True:
-        requests.get(config.urlApp)
+        requests.get(constants.urlApp)
         time.sleep(60 * 5)
 
 
 def initDB():
-    dao = DataBaseDao()
-    if (dao.count_posts() == 0):
+    UserDao()
+    top_dao = TopPostsDao()
+    if (top_dao.count_posts() == 0):
         posts = get_data(1000)
         posts.sort(key=sortByLikes)
         posts.reverse()
-        dao.create_few(posts[0:500])
-        dao.close()
+        top_dao.create_few(posts[0:500])
+        top_dao.close()
 
 
 if __name__ == '__main__':

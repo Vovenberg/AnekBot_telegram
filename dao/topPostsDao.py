@@ -1,10 +1,11 @@
 import sqlite3
-from post import Post
+
+from dto.post import Post
 
 
-class DataBaseDao:
+class TopPostsDao:
     def __init__(self):
-        self.con = sqlite3.connect('dataBase.db')
+        self.con = sqlite3.connect('topPosts.db')
         self.cursor = self.con.cursor()
         self.cursor.execute("CREATE TABLE IF NOT EXISTS post (id INT PRIMARY KEY, text TEXT, likes INT)")
 
