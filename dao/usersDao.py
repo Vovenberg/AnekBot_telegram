@@ -6,13 +6,14 @@ class UserDao:
         self.con = sqlite3.connect('users.db')
         self.cursor = self.con.cursor()
         self.cursor.execute(
-            "CREATE TABLE IF NOT EXISTS user (id INT PRIMARY KEY, username TEXT, chat_id INT, first_name TEXT, last_name TEXT, notifications BOOLEAN DEFAULT TRUE, count_clicks INT DEFAULT 0)")
+            "CREATE TABLE IF NOT EXISTS user (id INT PRIMARY KEY, username TEXT, chat_id INT, first_name TEXT, last_name TEXT, notifications BOOLEAN DEFAULT 1, count_clicks INT DEFAULT 0)")
 
     def save_user(self, user):
-        query = f"INSERT INTO user(id,username,chat_id,first_name,last_name) VALUES ({user.id},'{user.username}',{user.chat_id},'{user.first_name}','{user.last_name}')"
-        self.cursor.execute(query)
-        self.con.commit()
-        return self.con
+        if (len(self.get_by_id(user.id)) == 0):
+            query = f"INSERT INTO user(id,username,chat_id,first_name,last_name) VALUES ({user.id},'{user.username}',{user.chat_id},'{user.first_name}','{user.last_name}')"
+            self.cursor.execute(query)
+            self.con.commit()
+        self.con.close()
 
     def get_by_id(self, id):
         return self.cursor.execute(f'SELECT * FROM user where id = {id}').fetchall()
@@ -23,13 +24,13 @@ class UserDao:
     def get_all(self):
         return self.cursor.execute(f'SELECT * FROM user').fetchall()
 
-    def enable_notifications(self, username):
-        self.cursor.execute(f"UPDATE user SET notifications = 1 where username = '{username}'").fetchall()
+    def enable_notifications(self, id):
+        self.cursor.execute(f"UPDATE user SET notifications = 1 where id = {id}").fetchall()
         self.con.commit()
         self.con.close()
 
-    def disable_notifications(self, username):
-        self.cursor.execute(f"UPDATE user SET notifications = 0 where username = '{username}'").fetchall()
+    def disable_notifications(self, id):
+        self.cursor.execute(f"UPDATE user SET notifications = 0 where id = {id}").fetchall()
         self.con.commit()
         self.con.close()
 

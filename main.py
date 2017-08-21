@@ -23,7 +23,7 @@ def start(message):
     button_last10 = types.KeyboardButton(text="☝️Последнее лучшее")
     keyboard.add(button_last10, button_top10)
     keyboard.add(button_random)
-    UserDao().save_user(User(message.from_user, message.chat.id)).close()
+    UserDao().save_user(User(message.from_user, message.chat.id))
     bot.send_message(message.chat.id, 'Добро пожаловать, любитель хорошего юмора. Присаживайся поудобнее, начинаем...',
                      reply_markup=keyboard)
 
@@ -37,14 +37,14 @@ def info(message):
 
 @bot.message_handler(commands=["disable"])
 def disableNotifications(message):
-    UserDao().disable_notifications(message.from_user.username)
+    UserDao().disable_notifications(message.from_user.id)
     logging.info(f'Notifications from user: {message.from_user} disabled')
     bot.send_message(message.chat.id, 'Уведомления отключены.')
 
 
 @bot.message_handler(commands=["enable"])
 def enableNotifications(message):
-    UserDao().enable_notifications(message.from_user.username)
+    UserDao().enable_notifications(message.from_user.id)
     logging.info(f'Notifications from user: {message.from_user} enabled')
     bot.send_message(message.chat.id, 'Уведомления включены.')
 
@@ -54,7 +54,8 @@ def stats(message):
     if (message.from_user.username == 'v_kildyushev'):
         users = UserDao().get_all()
         for user in users:
-            bot.send_message(message.chat.id, f'Username: {user[1]}\n Chat_id: {user[2]} \n '
+            bot.send_message(message.chat.id, f'Id: {user[2]}\n Username: {user[1]}\n'
+                                              f'FirstName: {user[3]}\n SecondName: {user[4]}\n'
                                               f'Notifications: {user[5]}\n Clicks: {user[6]}')
 
 
