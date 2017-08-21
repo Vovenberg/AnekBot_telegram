@@ -52,11 +52,9 @@ def enableNotifications(message):
 @bot.message_handler(commands=["stats"])
 def stats(message):
     if (message.from_user.username == 'v_kildyushev'):
-        users = UserDao().get_all()
-        for user in users:
-            bot.send_message(message.chat.id, f'Id: {user[2]}\n Username: {user[1]}\n'
+        map(lambda user: bot.send_message(message.chat.id, f'Id: {user[2]}\n Username: {user[1]}\n'
                                               f'FirstName: {user[3]}\n SecondName: {user[4]}\n'
-                                              f'Notifications: {user[5]}\n Clicks: {user[6]}')
+                                              f'Notifications: {user[5]}\n Clicks: {user[6]}'), UserDao().get_all())
 
 
 @bot.message_handler(content_types=["text"])
@@ -82,7 +80,7 @@ def get_last_posts(chat_id, count):
     umoreski = get_data_from_umoreski(30)
     posts = get_data(30)
     posts.extend(umoreski)
-    posts.sort(key=sortByLikes)
+    posts.sort(key=lambda post: post.likes)
     posts.reverse()
     top: list = posts[0:20]
     results = []
@@ -150,10 +148,6 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
         timeout.cancel()
 
 
-def sortByLikes(post: Post):
-    return post.likes
-
-
 def check_new_posts_vk():
     try:
         file = open(constants.FILENAME_LASTID, 'rt')
@@ -212,7 +206,7 @@ def initDB():
     top_dao = TopPostsDao()
     if (top_dao.count_posts() == 0):
         posts = get_data(1000)
-        posts.sort(key=sortByLikes)
+        posts.sort(key=lambda post: post.likes)
         posts.reverse()
         top_dao.create_few(posts[0:500])
         top_dao.close()
