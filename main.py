@@ -50,7 +50,7 @@ def enableNotifications(message):
 
 
 @bot.message_handler(commands=["stats"])
-def enableNotifications(message):
+def stats(message):
     if (message.from_user.username == 'v_kildyushev'):
         users = UserDao().get_all()
         for user in users:
