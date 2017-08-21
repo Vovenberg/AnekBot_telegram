@@ -52,9 +52,10 @@ def enableNotifications(message):
 @bot.message_handler(commands=["stats"])
 def stats(message):
     if (message.from_user.username == 'v_kildyushev'):
-        map(lambda user: bot.send_message(message.chat.id, f'Id: {user[2]}\n Username: {user[1]}\n'
+        for user in UserDao().get_all():
+            bot.send_message(message.chat.id, f'Id: {user[2]}\n Username: {user[1]}\n'
                                               f'FirstName: {user[3]}\n SecondName: {user[4]}\n'
-                                              f'Notifications: {user[5]}\n Clicks: {user[6]}'), UserDao().get_all())
+                                              f'Notifications: {user[5]}\n Clicks: {user[6]}')
 
 
 @bot.message_handler(content_types=["text"])
