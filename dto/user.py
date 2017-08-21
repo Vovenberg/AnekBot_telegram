@@ -1,4 +1,3 @@
-from telegram import User
 class CustomUser:
     id = 0
     username = ""
@@ -17,7 +16,7 @@ class CustomUser:
         self.notifications = notifications
         self.count_clicks = count_clicks
 
-    def __init__(self, user:User, chat_id):
+    def __init__(self, user, chat_id):
         self.id = user.id
         self.username = user.username
         self.chat_id = chat_id
