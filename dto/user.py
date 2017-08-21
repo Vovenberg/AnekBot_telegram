@@ -1,5 +1,5 @@
 from telegram import User
-class User:
+class CustomUser:
     id = 0
     username = ""
     chat_id = 0

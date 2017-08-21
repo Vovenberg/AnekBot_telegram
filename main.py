@@ -10,7 +10,7 @@ from telebot.util import async
 from dao.topPostsDao import TopPostsDao
 from dao.usersDao import UserDao
 from dto.post import Post
-from dto.user import User
+from dto.user import CustomUser
 
 bot = telebot.TeleBot(constants.token)
 
@@ -23,7 +23,7 @@ def start(message):
     button_last10 = types.KeyboardButton(text="☝️Последнее лучшее")
     keyboard.add(button_last10, button_top10)
     keyboard.add(button_random)
-    UserDao().save_user(User(message.from_user, message.chat.id))
+    UserDao().save_user(CustomUser(message.from_user, message.chat.id))
     bot.send_message(message.chat.id, 'Добро пожаловать, любитель хорошего юмора. Присаживайся поудобнее, начинаем...',
                      reply_markup=keyboard)
 
