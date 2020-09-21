@@ -13,7 +13,7 @@ from dto.post import Post
 from dto.user import CustomUser
 
 bot = telebot.TeleBot(constants.token)
-logger = logging.getLogger('app')
+logging.basicConfig(filename='log.log', level=logging.INFO)
 
 
 @bot.message_handler(commands=["start"])
@@ -221,19 +221,3 @@ if __name__ == '__main__':
     ping_vk()
     ping_heroku()
     bot.polling(none_stop=True)
-
-def initLogger():
-    logger.setLevel(logging.DEBUG)
-    # create file handler which logs even debug messages
-    fh = logging.FileHandler('anekbot.log')
-    fh.setLevel(logging.DEBUG)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-    ch.setFormatter(formatter)
-    fh.setFormatter(formatter)
-    # add the handlers to logger
-    logger.addHandler(ch)
-    logger.addHandler(fh)
