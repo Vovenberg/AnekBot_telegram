@@ -13,7 +13,7 @@ from dto.post import Post
 from dto.user import CustomUser
 
 bot = telebot.TeleBot(constants.token)
-logging.basicConfig(filename='log.log', level=logging.INFO)
+logging.basicConfig(filename='app.log', level=logging.INFO)
 
 
 @bot.message_handler(commands=["start"])
@@ -135,7 +135,7 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
     try:
         feed_url = url.format(count, offset)
         feed = requests.get(feed_url)
-        logger.info(f"Got feed by url='{feed_url}': {feed}")
+        logging.info(f"Got feed by url='{feed_url}': {feed}")
         list = []
         for i, post in enumerate(feed.json()['response']['items']):
             if (i >= 1 and len(post["text"]) > 50):
@@ -143,10 +143,10 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
         len1 = len(list)
         if (len1 < count):
             list.extend(get_data(count - len1, offset + count))
-        logger.info(f'Got data from VK. count={count},offset={offset}')
+        logging.info(f'Got data from VK. count={count},offset={offset}')
         return list
     except eventlet.timeout.Timeout:
-        logger.warning('Got Timeout while retrieving VK JSON data. Cancelling...')
+        logging.warning('Got Timeout while retrieving VK JSON data. Cancelling...')
         return None
     finally:
         timeout.cancel()
@@ -163,9 +163,9 @@ def check_new_posts_vk():
         return
     last_id = file.read()
     if last_id is None or last_id == "":
-        logger.error('Empty file with last id. Last id = 0.')
+        logging.error('Empty file with last id. Last id = 0.')
         last_id = 0
-    logger.info(f'Last ID from file = {last_id}')
+    logging.info(f'Last ID from file = {last_id}')
 
     lastPosts = get_data(20)
     if lastPosts is not None:
@@ -183,10 +183,10 @@ def check_new_posts_vk():
             with open(constants.FILENAME_LASTID, 'wt') as file:
                 file.write(str(maxId))
                 file.close()
-                logger.info(f'New last id wrote in file: {maxId}')
+                logging.info(f'New last id wrote in file: {maxId}')
         else:
-            logger.info('No new posts')
-    logger.info('Finished scan new post')
+            logging.info('No new posts')
+    logging.info('Finished scan new post')
 
 
 #####################################################################
