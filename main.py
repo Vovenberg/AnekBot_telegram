@@ -136,9 +136,9 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
         feed_url = url.format(count, offset)
         feed = requests.get(feed_url).json()
         logging.info(f"Got feed by url='{feed_url}': {feed}")
-        if 'error' in feed:
-            raise Exception('Api VK Error', f'{feed['error']['error_msg']}')
         list = []
+        if 'error' in feed: 
+            return list
         for i, post in enumerate(feed['response']['items']):
             if (i >= 1 and len(post["text"]) > 50):
                 list.append(Post(post["id"], post["text"], post["likes"]["count"]))
