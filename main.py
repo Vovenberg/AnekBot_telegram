@@ -134,7 +134,7 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
     try:
         feed = requests.get(url.format(count, offset))
         list = []
-        for i, post in enumerate(feed.json()['response']):
+        for i, post in enumerate(feed.json()['response']['items']):
             if (i >= 1 and len(post["text"]) > 50):
                 list.append(Post(post["id"], post["text"], post["likes"]["count"]))
         len1 = len(list)
