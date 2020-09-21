@@ -13,6 +13,7 @@ from dto.post import Post
 from dto.user import CustomUser
 
 bot = telebot.TeleBot(constants.token)
+logger = initLogger()
 
 
 @bot.message_handler(commands=["start"])
@@ -134,7 +135,7 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
     try:
         feed_url = url.format(count, offset)
         feed = requests.get(feed_url)
-        logging.info(f"Got feed by url='{feed_url}': {feed}")
+        logger.info(f"Got feed by url='{feed_url}': {feed}")
         list = []
         for i, post in enumerate(feed.json()['response']['items']):
             if (i >= 1 and len(post["text"]) > 50):
@@ -142,10 +143,10 @@ def get_data(count=10, offset=0, url=constants.urlCategoryB):
         len1 = len(list)
         if (len1 < count):
             list.extend(get_data(count - len1, offset + count))
-        logging.info(f'Got data from VK. count={count},offset={offset}')
+        logger.info(f'Got data from VK. count={count},offset={offset}')
         return list
     except eventlet.timeout.Timeout:
-        logging.warning('Got Timeout while retrieving VK JSON data. Cancelling...')
+        logger.warning('Got Timeout while retrieving VK JSON data. Cancelling...')
         return None
     finally:
         timeout.cancel()
@@ -162,9 +163,9 @@ def check_new_posts_vk():
         return
     last_id = file.read()
     if last_id is None or last_id == "":
-        logging.error('Empty file with last id. Last id = 0.')
+        logger.error('Empty file with last id. Last id = 0.')
         last_id = 0
-    logging.info(f'Last ID from file = {last_id}')
+    logger.info(f'Last ID from file = {last_id}')
 
     lastPosts = get_data(20)
     if lastPosts is not None:
@@ -182,10 +183,10 @@ def check_new_posts_vk():
             with open(constants.FILENAME_LASTID, 'wt') as file:
                 file.write(str(maxId))
                 file.close()
-                logging.info(f'New last id wrote in file: {maxId}')
+                logger.info(f'New last id wrote in file: {maxId}')
         else:
-            logging.info('No new posts')
-    logging.info('Finished scan new post')
+            logger.info('No new posts')
+    logger.info('Finished scan new post')
 
 
 #####################################################################
@@ -216,10 +217,24 @@ def initDB():
 
 
 if __name__ == '__main__':
-    logging.getLogger('requests').setLevel(logging.CRITICAL)
-    logging.basicConfig(format='[%(asctime)s] %(filename)s:%(lineno)d %(levelname)s - %(message)s', level=logging.INFO,
-                        filename='bot_log.log', datefmt='%d.%m.%Y %H:%M:%S')
     initDB()
     ping_vk()
     ping_heroku()
     bot.polling(none_stop=True)
+
+def initLogger():
+    logger = logging.getLogger('app')
+    logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler('anekbot.log')
+    fh.setLevel(logging.DEBUG)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    # add the handlers to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
