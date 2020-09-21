@@ -13,7 +13,7 @@ from dto.post import Post
 from dto.user import CustomUser
 
 bot = telebot.TeleBot(constants.token)
-logger = initLogger()
+logger = logging.getLogger('app')
 
 
 @bot.message_handler(commands=["start"])
@@ -223,7 +223,6 @@ if __name__ == '__main__':
     bot.polling(none_stop=True)
 
 def initLogger():
-    logger = logging.getLogger('app')
     logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
     fh = logging.FileHandler('anekbot.log')
