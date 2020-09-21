@@ -132,7 +132,9 @@ def get_data_from_umoreski(count=10, offset=0):
 def get_data(count=10, offset=0, url=constants.urlCategoryB):
     timeout = eventlet.Timeout(10)
     try:
-        feed = requests.get(url.format(count, offset))
+        feed_url = url.format(count, offset)
+        feed = requests.get(feed_url)
+        logging.info(f"Got feed by url='{feed_url}': {feed}")
         list = []
         for i, post in enumerate(feed.json()['response']['items']):
             if (i >= 1 and len(post["text"]) > 50):
