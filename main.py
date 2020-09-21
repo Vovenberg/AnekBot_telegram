@@ -13,7 +13,7 @@ from dto.post import Post
 from dto.user import CustomUser
 
 bot = telebot.TeleBot(constants.token)
-logging.basicConfig(filename='app.log', level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 @bot.message_handler(commands=["start"])
