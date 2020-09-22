@@ -211,10 +211,10 @@ def initDB():
     UserDao()
     top_dao = TopPostsDao()
     if (top_dao.count_posts() == 0):
-        posts = get_data(1000)
+        posts = get_data(100)
         posts.sort(key=lambda post: post.likes)
         posts.reverse()
-        top_dao.create_few(posts[0:500])
+        top_dao.create_few(posts[0:50])
         top_dao.close()
 
 
