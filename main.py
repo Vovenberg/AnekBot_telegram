@@ -159,7 +159,7 @@ def check_new_posts_vk():
         file = open(constants.FILENAME_LASTID, 'rt')
     except FileNotFoundError:
         file = open(constants.FILENAME_LASTID, 'wt')
-        s = str(get_data(1)[0].id)
+        # s = str(get_data(1)[0].id)
         file.write(s)
         file.close()
         return
@@ -220,6 +220,6 @@ def initDB():
 
 if __name__ == '__main__':
     initDB()
-    ping_vk()
+    # ping_vk()
     ping_heroku()
     bot.polling(none_stop=True)
