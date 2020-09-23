@@ -193,8 +193,8 @@ def check_new_posts_vk():
 
 #####################################################################
 
-@async()
-def ping_vk():
+# @async()
+# def ping_vk():
     # while True:
     #     check_new_posts_vk()
     #     time.sleep(60 * 10)
